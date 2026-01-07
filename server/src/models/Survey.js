@@ -7,4 +7,4 @@ const surveySchema = new mongoose.Schema({
   responses: [String],
 });
 
-export default mongoose.model("Survey", surveySchema);
+export default mongoose.model("Surveylist", surveySchema);

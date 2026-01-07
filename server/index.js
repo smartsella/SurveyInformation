@@ -11,7 +11,7 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use("/api/surveys", surveyRoutes);
+app.use("/api/survey", surveyRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,19 +1,19 @@
 function SurveyResult({ survey, onBack }) {
-  const counts = {};
+  const count = {};
 
-  survey.responses.forEach((res) => {
-    counts[res] = (counts[res] || 0) + 1;
+  survey.responses.forEach((r) => {
+    count[r] = (count[r] || 0) + 1;
   });
 
   return (
     <div>
-      <h2>Survey Results</h2>
+      <h2>{survey.title} - Results</h2>
 
       <p>Total Responses: {survey.responses.length}</p>
 
-      {Object.entries(counts).map(([option, count]) => (
-        <p key={count}>
-          {option}: {count}
+      {Object.entries(count).map(([opt, val]) => (
+        <p key={opt}>
+          {opt}: {val}
         </p>
       ))}
 

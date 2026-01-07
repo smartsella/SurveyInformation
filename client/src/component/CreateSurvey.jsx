@@ -1,34 +1,35 @@
 import { useState } from "react";
 
-function CreateSurvey({ onSave }) {
+const CreateSurvey = ({ onDone }) => {
+  //statte managee
   const [title, setTitle] = useState("");
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState([""]);
 
+  const token = localStorage.getItem("token");
+
   const addOption = () => setOptions([...options, ""]);
 
-  const saveSurvey = async () => {
-    try {
-      await import("../api").then(mod => mod.createSurvey({ title, question, options }));
-      onSave(); // Navigate back
-    } catch (err) {
-      alert("Failed to create survey: " + err.message);
-    }
+  const createSurvey = async () => {
+    await fetch(`http://localhost:5000/api/survey`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title, question, options }),
+    });
+
+    onDone();
   };
 
   return (
     <div>
       <h2>Create Survey</h2>
 
-      <input
-        placeholder="Survey Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-
+      <input placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
       <input
         placeholder="Question"
-        value={question}
         onChange={(e) => setQuestion(e.target.value)}
       />
 
@@ -36,19 +37,18 @@ function CreateSurvey({ onSave }) {
         <input
           key={i}
           placeholder={`Option ${i + 1}`}
-          value={opt}
           onChange={(e) => {
-            const newOptions = [...options];
-            newOptions[i] = e.target.value;
-            setOptions(newOptions);
+            const copy = [...options];
+            copy[i] = e.target.value;
+            setOptions(copy);
           }}
         />
       ))}
 
       <button onClick={addOption}>Add Option</button>
-      <button onClick={saveSurvey}>Save Survey</button>
+      <button onClick={createSurvey}>Save</button>
     </div>
   );
-}
+};
 
 export default CreateSurvey;

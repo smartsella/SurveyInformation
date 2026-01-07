@@ -1,19 +1,46 @@
-function SurveyList({ surveys, onCreate, onTake, onViewResults }) {
+import { useState } from "react";
+
+const SurveyList = ({ surveys, onCreate, onView, reload }) => {
+  //state managee
+  const [answers, setAnswers] = useState({});
+
+  const submitResponse = async (id) => {
+    await fetch(`http://localhost:5000/api/survey/${id}/response`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answer: answers[id] }),
+    });
+
+    reload();
+  };
+
   return (
     <div>
-      <button onClick={onCreate}>Create New Survey</button>
+      <button onClick={onCreate}>Create Survey</button>
 
-      <h2>Available Surveys</h2>
+      {surveys.map((s) => (
+        <div key={s._id}>
+          <h3>{s.title}</h3>
+          <p>{s.question}</p>
 
-      {surveys.map((survey) => (
-        <div key={survey.id}>
-          <span>{survey.title}</span>
-          <button onClick={() => onTake(survey)} style={{ marginRight: '10px' }}>Take Survey</button>
-          <button onClick={() => onViewResults(survey)}>View Results</button>
+          {s.options.map((opt) => (
+            <label key={opt}>
+              <input
+                type="radio"
+                name={s._id}
+                onChange={() => setAnswers({ ...answers, [s._id]: opt })}
+              />
+              {opt}
+            </label>
+          ))}
+
+          <br />
+          <button onClick={() => submitResponse(s._id)}>Submit</button>
+          <button onClick={() => onView(s)}>View Result</button>
         </div>
       ))}
     </div>
   );
-}
+};
 
 export default SurveyList;

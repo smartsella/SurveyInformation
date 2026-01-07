@@ -1,58 +1,54 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import CreateSurvey from "./component/CreateSurvey";
 import SurveyList from "./component/SurveyList";
-import TakeSurvey from "./component/TakeSurvey";
 import SurveyResult from "./component/SurveyResult";
-import { getSurveys } from "./api";
 
-function App() {
+const App = () => {
   const [surveys, setSurveys] = useState([]);
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [view, setView] = useState("list");
 
-  const loadSurveys = () => {
-     getSurveys()
-        .then(setSurveys)
-        .catch(err => console.error("Failed to fetch surveys", err));
+  const loadSurveys = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/survey`);
+
+      if (!res.ok) {
+        throw new Error("Server error");
+      }
+
+      const data = await res.json();
+      setSurveys(data);
+    } catch (err) {
+      console.error("Load surveys failed:", err.message);
+    }
   };
 
   useEffect(() => {
-    if (view === "list") {
-      loadSurveys();
-    }
-  }, [view]);
+    loadSurveys();
+  }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Survey App</h1>
+    <div>
+      <h1>**Survey Application**</h1>
 
       {view === "list" && (
         <SurveyList
           surveys={surveys}
           onCreate={() => setView("create")}
-          onTake={(survey) => {
-            setSelectedSurvey(survey);
-            setView("take");
-          }}
-          onViewResults={(survey) => {
+          onView={(survey) => {
             setSelectedSurvey(survey);
             setView("result");
           }}
+          reload={loadSurveys}
         />
       )}
 
       {view === "create" && (
         <CreateSurvey
-          onSave={() => {
+          onDone={() => {
+            loadSurveys();
             setView("list");
           }}
-        />
-      )}
-
-      {view === "take" && (
-        <TakeSurvey
-          survey={selectedSurvey}
-          onSubmit={() => setView("list")}
         />
       )}
 
@@ -61,6 +57,6 @@ function App() {
       )}
     </div>
   );
-}
+};
 
 export default App;
