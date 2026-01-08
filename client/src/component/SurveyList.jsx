@@ -12,6 +12,7 @@ const SurveyList = ({ surveys, onCreate, onView, reload }) => {
     });
 
     reload();
+    alert("Data added for DB");
   };
 
   return (

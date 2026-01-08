@@ -1,4 +1,4 @@
-function SurveyResult({ survey, onBack }) {
+const SurveyResult = ({ survey, onBack }) => {
   const count = {};
 
   survey.responses.forEach((r) => {
@@ -20,6 +20,6 @@ function SurveyResult({ survey, onBack }) {
       <button onClick={onBack}>Back</button>
     </div>
   );
-}
+};
 
 export default SurveyResult;

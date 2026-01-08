@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
   res.json(survey);
 });
 
-// Get all surveys
+// Get all survey
 router.get("/", async (req, res) => {
   const surveys = await Survey.find();
   res.json(surveys);
